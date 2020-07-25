@@ -96,22 +96,26 @@ class Calculator {
     btnPress() {
         let input = this.textContent
         let upperValue = calc.upperValue.textContent
+
         // verificar se tem só números
         var reg = new RegExp('^\\d+$')
+
+        // se precisar resetar, limpa o display
+        if(calc.reset && reg.test(input)) {
+            upperValue = '0'
+        }
 
         // limpa o prop de reset
         calc.reset = 0
 
         // ativa método de limpar o display
         if (input == 'AC') {
-
             calc.clearValues()
 
         }else if(input == '=') {
-
             calc.resolution()
 
-        } else {
+        }else {
 
             // checa se precisa adicionar ou não
             if (calc.checkLastDigit(input, upperValue, reg)) {
@@ -119,13 +123,15 @@ class Calculator {
             }
 
             // adiciona espaços aos operadores
-            if (!reg.test(input)) {
+            if(!reg.test(input)) {
                 input = ` ${input} `
             }
-            if (upperValue == '0') {
-                if(reg.test(input))
+
+            if(upperValue == '0') {
+                if(reg.test(input) )
                 calc.upperValue.textContent = input
-            } else {
+
+            }else {
                 calc.upperValue.textContent += input
             }
         }
