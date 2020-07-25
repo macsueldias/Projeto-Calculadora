@@ -10,14 +10,39 @@ class Calculator {
         this.resultValue.textContent = '0'
     }
     checkLastDigit(input, upperValue, reg) {
-        if ((
-            !reg.test(input) &&
-            !reg.test(upperValue.substr(upperValue.length - 1))
+        if((!reg.test(input) && !reg.test(upperValue.substr(upperValue.length - 1))
         )) {
             return true
-        } else {
+        }else {
             return false
         }
+    }
+
+    // método de soma
+    sum(n1, n2) {
+        return parseFloat(n1) + parseFloat(n2)
+    }
+
+    // método de subtração
+    subtraction(n1, n2) {
+        return parseFloat(n1) - parseFloat(n2)
+    }
+
+    // método de divisão
+    division(n1, n2) {
+        return parseFloat(n1) / parseFloat(n2)
+    }
+
+    // método de multiplicação
+    multiplication(n1, n2) {
+        return parseFloat(n1) * parseFloat(n2)
+    }
+
+
+    // atualiza valores
+    refreshValues(total) {
+        this.upperValue.textContent = total
+        this.resultValue.textContent = total
     }
 
     // resolve a operação
@@ -30,20 +55,42 @@ class Calculator {
         let result = 0
         
         for(let i = 0; i <= upperValueArray.length; i++){
+            let operation = 0
             let actualItem = upperValueArray[i]
 
-            if(actualItem == '+') {
-                result = parseFloat(upperValueArray[i - 1]) + parseFloat(upperValueArray[i + 1])
-            }if(actualItem == 'x') {
-                result = parseFloat(upperValueArray[i - 1]) * parseFloat(upperValueArray[i + 1])
-            }if(actualItem = '/') {
-                result = parseFloat(upperValueArray[i - 1]) / parseFloat(upperValueArray[i + i])
-            }if(actualItem = '-') {
-                result = parseFloat(upperValueArray[i - 1]) - parseFloat(upperValueArray[i + 1])
+            // operações
+            if(actualItem == 'x') {
+                result = calc.multiplication(upperValueArray[i - 1], upperValueArray[i + 1])
+                operation = 1
+            }else if(actualItem == '/') {
+                result = calc.division(upperValueArray[i - 1], upperValueArray[i + 1])
+                operation = 1
+            }else if(!upperValueArray.includes('x') && !upperValueArray.includes('/')) {
+                if(actualItem == '+') {
+                    result = calc.sum(upperValueArray[i - 1], upperValueArray[i + 1])
+                    operation = 1
+                }else if(actualItem == '-') {
+                    result = calc.subtraction(upperValueArray[i - 1], upperValueArray[i + 1])
+                    operation = 1
+                }
+            }
+            
+            if(operation) {
+                // indice anterior no resultado da operação
+                upperValueArray[i - 1] = result
+                // remove os itens já utilizado para a operação
+                upperValueArray.splice(i, 2)
+                // atualizar o valor do indice
+                i = 0
+            }
+
+            if(result) {
+                calc.reset = 1
             }
         }
-        this.upperValue.textContent = result
-        this.resultValue.textContent = result
+
+        // atualizar os totais
+        calc.refreshValues(result)
     }
 
     btnPress() {
@@ -51,6 +98,9 @@ class Calculator {
         let upperValue = calc.upperValue.textContent
         // verificar se tem só números
         var reg = new RegExp('^\\d+$')
+
+        // limpa o prop de reset
+        calc.reset = 0
 
         // ativa método de limpar o display
         if (input == 'AC') {
@@ -72,8 +122,8 @@ class Calculator {
             if (!reg.test(input)) {
                 input = ` ${input} `
             }
-
             if (upperValue == '0') {
+                if(reg.test(input))
                 calc.upperValue.textContent = input
             } else {
                 calc.upperValue.textContent += input
